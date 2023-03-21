@@ -79,7 +79,7 @@ public class Car {
     }
 
     public void showSpeed(){
-        System.out.println(pilot + " roule maintenant à " + speed);
+        System.out.println(pilot + " roule maintenant à " + speed + " km/h");
     }
 
     public void updateDistance(){
@@ -87,7 +87,7 @@ public class Car {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                distance = distance + speed / 0.10 / 3600;
+                distance += speed / (0.1 / 3600);
                 showDistance();
             }
         };
@@ -95,6 +95,6 @@ public class Car {
     }
 
     public void showDistance(){
-        System.out.println(pilot + " : " + distance);
+        System.out.println("distance par parcourue par " + pilot + " : " + distance + " km");
     }
 }

@@ -78,7 +78,9 @@ public class Race {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                checkWinner();
+                if (checkWinner()){
+                    setRunning(false);
+                }
             }
         };
         timer.schedule(task, 0, 100);
@@ -86,7 +88,7 @@ public class Race {
 
     public boolean checkWinner(){
         for (int i = 0; i < cars.size(); i++) {
-            if (cars.get(i).getDistance() >= getTotalDistance()){
+            if (cars.get(i).getDistance() >= getRaceLength()){
                 winner = cars.get(i);
                 System.out.println("Le vainqueur est " + winner.getPilot());
                 return true;
@@ -95,7 +97,7 @@ public class Race {
         return false;
     }
 
-    public int getTotalDistance(){
+    public int getRaceLength(){
         int totalDistance = 0;
         for (int i = 0; i < laps.size(); i++){
             totalDistance += laps.get(i).getLength();
