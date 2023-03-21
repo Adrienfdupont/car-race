@@ -3,16 +3,20 @@ import java.util.TimerTask;
 
 public class Car {
 
-    private int speed = 0;
+    private int speed;
     private int minSpeed;
     private int maxSpeed;
-    private double distance = 0;
-
-    private boolean running;
+    private double distance;
     private String pilot;
-    public Car(){};
+
+    public Car(){
+        speed = 0;
+        distance = 0;
+    };
 
     public Car(int minSpeed, int maxSpeed, String pilot) {
+        this.speed = 0;
+        this.distance = 0;
         this.minSpeed = minSpeed;
         this.maxSpeed = maxSpeed;
     }
@@ -49,14 +53,6 @@ public class Car {
         this.distance = distance;
     }
 
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
     public String getPilot() {
         return pilot;
     }
@@ -66,28 +62,39 @@ public class Car {
     }
 
     public void run(){
-        running = true;
+        updateSpeed();
+        updateDistance();
+    }
+
+    public void updateSpeed(){
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                updateSpeed();
-                updateDistance();
+                speed = (int) Math.floor(Math.random() * (maxSpeed - minSpeed + 1) + minSpeed);
+                showSpeed();
             }
         };
         timer.schedule(task, 0, 60000);
     }
 
-    public void updateSpeed(){
-        speed = (int) Math.floor(Math.random() * (maxSpeed - minSpeed + 1) + minSpeed);
-        showSpeed();
-    }
-
     public void showSpeed(){
-        System.out.println(speed);
+        System.out.println(pilot + " roule maintenant à " + speed);
     }
 
     public void updateDistance(){
-        distance = distance + speed / 60;
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                distance = distance + speed / 0.10 / 3600;
+                showDistance();
+            }
+        };
+        timer.schedule(task, 0, 100);
+    }
+
+    public void showDistance(){
+        System.out.println(pilot + " : " + distance);
     }
 }

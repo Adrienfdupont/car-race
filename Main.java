@@ -1,7 +1,10 @@
 public class Main {
     public static void main(String[] args) {
         Race race = new Race();
-        race.setLength(4);
+        
+        for (int i = 0; i < 3; i++){
+            race.addLap(new Lap(13));
+        }
 
         Car car1 = new Car(130, 312, "Adrien");
         Car car2 = new Car(138, 303, "Simba");
