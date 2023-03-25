@@ -1,8 +1,6 @@
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class Car {
 
+    private static final int speedInterval = 60;
     private int speed;
     private int minSpeed;
     private int maxSpeed;
@@ -19,6 +17,7 @@ public class Car {
         this.distance = 0;
         this.minSpeed = minSpeed;
         this.maxSpeed = maxSpeed;
+        this.pilot = pilot;
     }
 
     public int getSpeed() {
@@ -49,7 +48,7 @@ public class Car {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
@@ -61,40 +60,37 @@ public class Car {
         this.pilot = pilot;
     }
 
-    public void run(){
-        updateSpeed();
-        updateDistance();
+    public void update(int frame, double totalSeconds, double secondPerFrame){
+        if (frame == 1 || totalSeconds % Car.speedInterval == 0){
+            changeSpeed();
+        }
+        calculateDistance(secondPerFrame);
     }
 
-    public void updateSpeed(){
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                speed = (int) Math.floor(Math.random() * (maxSpeed - minSpeed + 1) + minSpeed);
-                showSpeed();
-            }
-        };
-        timer.schedule(task, 0, 60000);
+    public void changeSpeed(){
+        setSpeed((int) Math.floor(Math.random() * (getMaxSpeed() - getMinSpeed() + 1) + getMinSpeed()));
+        showSpeed();
     }
 
-    public void showSpeed(){
-        System.out.println(pilot + " roule maintenant à " + speed + " km/h");
-    }
-
-    public void updateDistance(){
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                distance += speed / (0.1 / 3600);
-                showDistance();
-            }
-        };
-        timer.schedule(task, 0, 100);
+    public void calculateDistance(double secondPerFrame){
+        double frameDistance = secondPerFrame * getSpeed() / 3600.0;
+        setDistance(getDistance() + frameDistance);
     }
 
     public void showDistance(){
-        System.out.println("distance par parcourue par " + pilot + " : " + distance + " km");
+        System.out.println("distance par parcourue par " + getPilot() + " : " + round(getDistance()) + " km");
+    }
+
+    public void showSpeed(){
+        System.out.println("----------------------------------------------");
+        System.out.println(pilot + " roule maintenant à " + getSpeed() + " km/h");
+        System.out.println("----------------------------------------------");
+    }
+
+    public static double round(double value) {
+        long factor = (long) Math.pow(10, 2);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 }

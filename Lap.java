@@ -1,6 +1,6 @@
 public class Lap {
     
-    private int kilometers;
+    private double kilometers;
 
     public Lap(){};
 
@@ -8,11 +8,11 @@ public class Lap {
         this.kilometers = kilometers;
     }
 
-    public int getLength(){
+    public double getLength(){
         return kilometers;
     }
 
-    public void setLength(int kilometers){
+    public void setLength(double kilometers){
         this.kilometers = kilometers;
     }
 }

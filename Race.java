@@ -3,11 +3,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Race {
-
+    private static final double FPS = 10.0;
+    private static final int infoInterval = 5;
     private ArrayList<Lap> laps;
     private ArrayList<Car> cars;
     private Car winner;
-    private boolean running;
+    private double totalDistance;
+    private int frame;
 
     public Race(){
         laps = new ArrayList<Lap>();
@@ -58,50 +60,78 @@ public class Race {
         this.winner = winner;
     }
 
-    public boolean isRunning(){
-        return running;
+    public double getTotalDistance(){
+        return totalDistance;
     }
 
-    public void setRunning(boolean running){
-        this.running = running;
+    public void setTotalDistance(double totalDistance){
+        this.totalDistance = totalDistance;
     }
 
-    public void start(){
-        setRunning(true);
-        for (int i = 0; i < cars.size(); i++){
-            cars.get(i).run();
+    public int getFrame(){
+        return frame;
+    }
+
+    public void setFrame(int frame){
+        this.frame = frame;
+    }
+
+    public void run(){
+        double totalDistance = 0;
+        for (int i = 0; i < getLaps().size(); i++){
+            totalDistance += getLaps().get(i).getLength();
         }
-
-        System.out.println("La course vient de commencer");
+        setTotalDistance(totalDistance);
+        setFrame(0);
 
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                if (checkWinner()){
-                    setRunning(false);
+                if (update() == false){
+                    this.cancel();
+                    timer.cancel();
                 }
             }
         };
-        timer.schedule(task, 0, 100);
+        // le timertask a besoin d'une durée en millisecondes
+        long FPMS = (long) (1000 / FPS);
+        timer.schedule(task, 0, FPMS);
     }
 
-    public boolean checkWinner(){
-        for (int i = 0; i < cars.size(); i++) {
-            if (cars.get(i).getDistance() >= getRaceLength()){
-                winner = cars.get(i);
-                System.out.println("Le vainqueur est " + winner.getPilot());
+    public boolean update(){
+        setFrame(getFrame() + 1);
+        double totalSeconds = getFrame() / Race.FPS;
+        double secondPerFrame = 1 / Race.FPS;
+
+        // mise à jour de la vitesse et de la distance parcourue et vérification winner
+        for (int i = 0; i < getCars().size(); i ++){
+            getCars().get(i).update(getFrame(), totalSeconds, secondPerFrame);
+            if (isWinner(getCars().get(i))){
+                return false;
+            }
+        }
+        // affichage informations
+        if (getFrame() == 1 || totalSeconds % Race.infoInterval == 0){
+            System.out.println("-------- Temps écoulé : " + totalSeconds + " secondes --------");
+            for (int i = 0; i < getCars().size(); i ++){
+                getCars().get(i).showDistance();
+            }
+            System.out.println("----------------------------------------------");
+        }
+        return true;
+    }
+
+    public boolean isWinner(Car car){
+        for (int i = 0; i < getCars().size(); i++) {
+            if (car.getDistance() >= getTotalDistance()){
+                winner = car;
+                System.out.println("---------------------------------------");
+                winner.showDistance();
+                System.out.println(winner.getPilot() + " remporte la course");
                 return true;
             }
         }
         return false;
-    }
-
-    public int getRaceLength(){
-        int totalDistance = 0;
-        for (int i = 0; i < laps.size(); i++){
-            totalDistance += laps.get(i).getLength();
-        }
-        return totalDistance;
     }
 }

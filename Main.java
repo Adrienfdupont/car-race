@@ -9,7 +9,8 @@ public class Main {
 
         race.addCar(new Car(130, 312, "Adrien"));
         race.addCar(new Car(138, 303, "Simba"));
+        race.addCar(new Car(123, 308, "Daisy"));
 
-        race.start();
+        race.run();
     }
 }
